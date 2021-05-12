@@ -1,27 +1,9 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
-import "flatpickr/dist/themes/material_green.css";
-
-
-const refs = {
-    clockfaceDays: document.querySelector('span[data-value="days"]'),
-    clockfaceHours: document.querySelector('span[data-value="hours"]'),
-    clockfaceMins: document.querySelector('span[data-value="mins"]'),
-    clockfaceSecs: document.querySelector('span[data-value="secs"]'),
-    startBtnEl: document.querySelector('button[data-action="start"]'),
-    resetBtnEl: document.querySelector('button[data-action="reset"]'),
-    targetDateInputEl: document.querySelector('#date-input'),
-}
-
-let isActive = false;
-let timerId = null;
-let timer = null;
-
-class CountdownTimer {
+export default class CountdownTimer {
   constructor({ selector, targetDate, onTick }) {
     this.selector = selector;
     this.targetDate = targetDate;
     this.onTick = onTick;
+    this.timerId = null;
     }
     
     init() {
@@ -35,8 +17,7 @@ class CountdownTimer {
           return;
       }
 
-      isActive = true;
-      timerId = setInterval(() => {
+      this.timerId = setInterval(() => {
         const deltaTime = this.getDeltaTime();
 
           let time = this.convertUnxToClockTime(deltaTime);
@@ -48,8 +29,7 @@ class CountdownTimer {
     }
 
     stopCountDown() {
-        clearInterval(timerId);
-        isActive = false;
+        clearInterval(this.timerId);
         this.onTick(this.convertUnxToClockTime(0));
        
     }
@@ -73,48 +53,8 @@ class CountdownTimer {
     }
 
 }
+ 
 
-flatpickr("#date-input", {
-    altInput: true,
-    enableTime: true,
-    dateFormat: "Y-m-d H:i",
-});
-    
-
-refs.startBtnEl.addEventListener('click', onStartBtnClick);
-refs.resetBtnEl.addEventListener('click', onResetBtnClick);
-
-function onStartBtnClick() {
-    if (isActive) {
-        return;
-    }
-    
-    if (refs.targetDateInputEl.value === "") {
-        alert("Выберите дату и время окончания акции!");
-        return;
-    }
-
-    timer = new CountdownTimer({
-    selector: '#timer-1',
-    targetDate: new Date(refs.targetDateInputEl.value),
-    onTick: upateClockFace,
-});
-
-    timer.startCountDown();
-
-}
-
-function onResetBtnClick() {
-    timer.stopCountDown();
-    timer = null;
-}
-
-function upateClockFace({ days, hours, mins, secs }) {
-    refs.clockfaceDays.textContent = days;
-    refs.clockfaceHours.textContent = hours;
-    refs.clockfaceMins.textContent = mins;
-    refs.clockfaceSecs.textContent = secs;
-}
 
 
 

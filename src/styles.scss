@@ -73,10 +73,6 @@ body {
   font-size: 16px;
 }
 
-.admin-timer-api {
-  margin-top: 50px;
-}
-
 .admin-timer-api__title {
   margin-top: 0;
   text-align: center;
@@ -85,7 +81,8 @@ body {
   font-size: 30px;
 }
 
-.control-btn {
+.admin-timer-api {
+  margin-top: 50px;
   display: flex;
   justify-content: space-evenly;
 }
