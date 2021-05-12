@@ -1,18 +1,27 @@
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/material_green.css";
+
 
 const refs = {
     clockfaceDays: document.querySelector('span[data-value="days"]'),
     clockfaceHours: document.querySelector('span[data-value="hours"]'),
     clockfaceMins: document.querySelector('span[data-value="mins"]'),
     clockfaceSecs: document.querySelector('span[data-value="secs"]'),
+    startBtnEl: document.querySelector('button[data-action="start"]'),
+    resetBtnEl: document.querySelector('button[data-action="reset"]'),
+    targetDateInputEl: document.querySelector('#date-input'),
 }
+
+let isActive = false;
+let timerId = null;
+let timer = null;
 
 class CountdownTimer {
   constructor({ selector, targetDate, onTick }) {
     this.selector = selector;
-      this.targetDate = targetDate;
-      this.onTick = onTick;
-
-      this.init();
+    this.targetDate = targetDate;
+    this.onTick = onTick;
     }
     
     init() {
@@ -21,25 +30,28 @@ class CountdownTimer {
     }
 
   startCountDown() {
+      if (this.getDeltaTime() < 0) {
+          alert('Выберите дату не раньше текущей');
+          return;
+      }
 
-
-      const timerId = setInterval(() => {
+      isActive = true;
+      timerId = setInterval(() => {
         const deltaTime = this.getDeltaTime();
-          
-        if (time === 0) {
-            clearInterval(timerId);
-            console.log('Сожалеем, акция закончилась');
-            return;
-        }
 
-        console.log(deltaTime);
           let time = this.convertUnxToClockTime(deltaTime);
-          console.log(time);
           this.onTick(time);
 
 
      }, 1000);
 
+    }
+
+    stopCountDown() {
+        clearInterval(timerId);
+        isActive = false;
+        this.onTick(this.convertUnxToClockTime(0));
+       
     }
     
     convertUnxToClockTime(time) {
@@ -48,7 +60,8 @@ class CountdownTimer {
     const mins = this.padTimeUnits(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
     const secs = this.padTimeUnits(Math.floor((time % (1000 * 60)) / 1000));
     return { days, hours, mins, secs };
-}
+    }
+    
     padTimeUnits(timeUnit) {
     return String(timeUnit).padStart(2, 0);
     }
@@ -61,14 +74,40 @@ class CountdownTimer {
 
 }
 
+flatpickr("#date-input", {
+    altInput: true,
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+});
+    
 
-const timer = new CountdownTimer({
-  selector: '#timer-1',
-    targetDate: new Date('May 13, 2021'),
+refs.startBtnEl.addEventListener('click', onStartBtnClick);
+refs.resetBtnEl.addEventListener('click', onResetBtnClick);
+
+function onStartBtnClick() {
+    if (isActive) {
+        return;
+    }
+    
+    if (refs.targetDateInputEl.value === "") {
+        alert("Выберите дату и время окончания акции!");
+        return;
+    }
+
+    timer = new CountdownTimer({
+    selector: '#timer-1',
+    targetDate: new Date(refs.targetDateInputEl.value),
     onTick: upateClockFace,
 });
 
-timer.startCountDown();
+    timer.startCountDown();
+
+}
+
+function onResetBtnClick() {
+    timer.stopCountDown();
+    timer = null;
+}
 
 function upateClockFace({ days, hours, mins, secs }) {
     refs.clockfaceDays.textContent = days;
@@ -76,8 +115,6 @@ function upateClockFace({ days, hours, mins, secs }) {
     refs.clockfaceMins.textContent = mins;
     refs.clockfaceSecs.textContent = secs;
 }
-
-
 
 
 

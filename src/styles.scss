@@ -28,9 +28,7 @@ body {
 
 .container {
   padding: 30px;
-  width: 800px;
-  // border: 3px solid var(--secongary-background-color);
-  // border-radius: 5px;
+  width: 900px;
 }
 
 .title {
@@ -44,6 +42,7 @@ body {
 .timer {
   display: flex;
   justify-content: center;
+
   margin: -20px;
   font-family: sans-serif;
   color: var(--primary-white-color);
@@ -75,14 +74,27 @@ body {
 }
 
 .admin-timer-api {
+  margin-top: 50px;
+}
+
+.admin-timer-api__title {
+  margin-top: 0;
   text-align: center;
+  color: var(--primary-font-color);
+  font-weight: 300;
+  font-size: 30px;
+}
+
+.control-btn {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .admin-timer-api__btn {
   padding: 10px 32px;
   border: none;
   border-radius: 4px;
-  min-width: 200px;
+  min-width: 150px;
   cursor: pointer;
 
   background-color: var(--secongary-background-color);
